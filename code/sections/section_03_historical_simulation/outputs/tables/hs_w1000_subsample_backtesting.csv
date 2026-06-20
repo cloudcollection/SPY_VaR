@@ -1,0 +1,19 @@
+model,period,start,end,alpha,n_obs,expected_violations,n_violations,failure_rate,avg_var
+Ordinary HS,Crisis,2007-09-01,2009-06-30,0.01,460,4.6,33,0.0717,-0.0335
+Ordinary HS,Crisis,2007-09-01,2009-06-30,0.05,460,23.0,86,0.187,-0.0167
+Ordinary HS,Crisis,2007-09-01,2009-06-30,0.1,460,46.0,117,0.2543,-0.0112
+Ordinary HS,Post-crisis calm,2012-01-01,2016-12-31,0.01,1258,12.58,8,0.0064,-0.0318
+Ordinary HS,Post-crisis calm,2012-01-01,2016-12-31,0.05,1258,62.9,39,0.031,-0.018
+Ordinary HS,Post-crisis calm,2012-01-01,2016-12-31,0.1,1258,125.8,86,0.0684,-0.0121
+Time-weighted HS,Crisis,2007-09-01,2009-06-30,0.01,460,4.6,11,0.0239,-0.0502
+Time-weighted HS,Crisis,2007-09-01,2009-06-30,0.05,460,23.0,23,0.05,-0.0355
+Time-weighted HS,Crisis,2007-09-01,2009-06-30,0.1,460,46.0,50,0.1087,-0.0266
+Time-weighted HS,Post-crisis calm,2012-01-01,2016-12-31,0.01,1258,12.58,16,0.0127,-0.0231
+Time-weighted HS,Post-crisis calm,2012-01-01,2016-12-31,0.05,1258,62.9,59,0.0469,-0.0139
+Time-weighted HS,Post-crisis calm,2012-01-01,2016-12-31,0.1,1258,125.8,120,0.0954,-0.0097
+KDE Time-weighted HS,Crisis,2007-09-01,2009-06-30,0.01,460,4.6,8,0.0174,-0.0527
+KDE Time-weighted HS,Crisis,2007-09-01,2009-06-30,0.05,460,23.0,23,0.05,-0.0373
+KDE Time-weighted HS,Crisis,2007-09-01,2009-06-30,0.1,460,46.0,48,0.1043,-0.0282
+KDE Time-weighted HS,Post-crisis calm,2012-01-01,2016-12-31,0.01,1258,12.58,15,0.0119,-0.024
+KDE Time-weighted HS,Post-crisis calm,2012-01-01,2016-12-31,0.05,1258,62.9,54,0.0429,-0.0147
+KDE Time-weighted HS,Post-crisis calm,2012-01-01,2016-12-31,0.1,1258,125.8,106,0.0843,-0.0106

@@ -1,0 +1,28 @@
+W,model,alpha,n,viol,ci_low,ci_high,diff_from_expected_rounded
+250,Ordinary HS,0.01,4390,72,31,57,28
+250,Ordinary HS,0.05,4390,237,192,248,17
+250,Ordinary HS,0.1,4390,450,400,478,11
+250,Time-weighted HS,0.01,4390,72,31,57,28
+250,Time-weighted HS,0.05,4390,232,192,248,12
+250,Time-weighted HS,0.1,4390,438,400,478,-1
+250,KDE Time-weighted HS,0.01,4390,54,31,57,10
+250,KDE Time-weighted HS,0.05,4390,194,192,248,-26
+250,KDE Time-weighted HS,0.1,4390,383,400,478,-56
+500,Ordinary HS,0.01,4140,67,29,54,26
+500,Ordinary HS,0.05,4140,214,180,235,7
+500,Ordinary HS,0.1,4140,396,377,452,-18
+500,Time-weighted HS,0.01,4140,67,29,54,26
+500,Time-weighted HS,0.05,4140,218,180,235,11
+500,Time-weighted HS,0.1,4140,412,377,452,-2
+500,KDE Time-weighted HS,0.01,4140,51,29,54,10
+500,KDE Time-weighted HS,0.05,4140,186,180,235,-21
+500,KDE Time-weighted HS,0.1,4140,362,377,452,-52
+1000,Ordinary HS,0.01,3640,56,25,49,20
+1000,Ordinary HS,0.05,3640,177,157,208,-5
+1000,Ordinary HS,0.1,3640,303,329,400,-61
+1000,Time-weighted HS,0.01,3640,61,25,49,25
+1000,Time-weighted HS,0.05,3640,193,157,208,11
+1000,Time-weighted HS,0.1,3640,371,329,400,7
+1000,KDE Time-weighted HS,0.01,3640,47,25,49,11
+1000,KDE Time-weighted HS,0.05,3640,167,157,208,-15
+1000,KDE Time-weighted HS,0.1,3640,327,329,400,-37

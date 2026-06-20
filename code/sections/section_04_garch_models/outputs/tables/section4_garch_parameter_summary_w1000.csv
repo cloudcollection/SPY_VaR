@@ -1,0 +1,7 @@
+Parameter,Median,IQR,Interpretation
+$\hat{\mu}$,0.000735,0.000533 to 0.000943,Daily mean return
+$\hat{\omega}$,0.019137,0.007068 to 0.033304,Baseline variance
+$\hat{\alpha}_1$,0.099004,0.064526 to 0.145009,ARCH effect (shock sensitivity)
+$\hat{\beta}_1$,0.896013,0.811530 to 0.924210,Volatility persistence
+$\hat{\alpha}_1+\hat{\beta}_1$,0.98961,0.969190 to 1.000000,Total persistence
+$\hat{\nu}$,6.388838,5.609068 to 8.942289,Tail degrees of freedom

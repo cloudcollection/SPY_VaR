@@ -1,0 +1,2 @@
+parameter,median,q25,q75,positive_share,interpretation
+gamma_1,0.15982844632622212,0.12135755898559396,0.29873672105797777,1.0,Positive gamma means negative shocks increase next-day variance more than positive shocks in the GJR recursion.

@@ -1,0 +1,4 @@
+column,dtype,missing_values,missing_pct,n_rows,n_columns,index_name,index_type
+log_ret,float64,0,0.0,4640,3,date,DatetimeIndex
+rv5,float64,0,0.0,4640,3,date,DatetimeIndex
+bv,float64,0,0.0,4640,3,date,DatetimeIndex

@@ -1,0 +1,5 @@
+metric,value,interpretation
+full_sample_excess_kurtosis,8.218904229046291,Excess kurtosis of SPY daily log returns; values far above zero reject Gaussian-style tail intuition.
+crisis_std,0.022416316132395225,Standard deviation from 2007-09-01 to 2009-06-30.
+calm_std,0.008052222003257479,Standard deviation from 2012-01-01 to 2016-12-31.
+crisis_to_calm_std_ratio,2.7838671267790227,Volatility regime ratio; values materially above one indicate fixed-window regime mixing.

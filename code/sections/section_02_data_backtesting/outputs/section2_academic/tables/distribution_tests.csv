@@ -1,0 +1,4 @@
+test,series,statistic,p_value
+Jarque-Bera,log_ret,13060.903679887218,0.0
+ADF,log_ret,-16.726936339805583,1.393421031619759e-29
+ADF,squared_log_ret,-5.977740354212933,1.8699783716307548e-07
