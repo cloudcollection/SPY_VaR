@@ -131,9 +131,6 @@ This repository keeps both a compact reproduction path and the section-organized
 Some computationally heavier model runs may require more time than the compact reproduction script. The included forecasts, tables, and figures are kept so that the report can be audited without rerunning every expensive step.
 
 ## Author
-
-Ziyi Zhou  
-B.Sc. Statistics, Guangzhou University  
 Homepage: <https://cloudcollection.github.io>  
-GitHub: <https://github.com/cloudcollection>
+
 
