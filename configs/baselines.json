@@ -1,0 +1,6 @@
+{
+  "window_size": 1000,
+  "seed": 42,
+  "decay": 0.98,
+  "models": ["hs", "weighted_hs", "kde_hs", "garch_t", "gjr_garch_t", "mlp"]
+}

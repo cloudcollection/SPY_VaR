@@ -1,0 +1,7 @@
+{
+  "window_size": 60,
+  "seed": 42,
+  "models": ["hs", "weighted_hs", "kde_hs", "garch_t", "gjr_garch_t", "mlp", "c2"],
+  "mlp": {"lag": 5, "epochs": 2, "patience": 1, "refit_every": 40},
+  "c2": {"epochs": 2, "patience": 1, "refit_every": 40}
+}

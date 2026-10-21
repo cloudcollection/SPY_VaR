@@ -1,136 +1,169 @@
-﻿# SPY VaR Forecasting Mini Program
+# SPY Value-at-Risk Forecasting
 
-This repository is a compact, reproducible mini program for one-day-ahead Value-at-Risk (VaR) forecasting on SPY. The project compares classical risk-modeling baselines with neural quantile methods under a rolling-window backtesting framework, with emphasis on statistical testing, reproducible code, and transparent discussion of model limitations.
+A research project on one-day-ahead downside risk forecasting for SPY, comparing
+historical simulation, Student-t volatility models, and neural quantile methods
+at the **1%, 5%, and 10% lower-tail probabilities**.
 
-## Full Report
+**[Full report](Final_Report_Single.pdf)** ·
+**[Reproduction guide](docs/REPRODUCIBILITY.md)** ·
+**[Data documentation](code/data/README.md)**
 
-The complete PDF report is available here:
+## Research question and findings
 
-- [Final_Report_Single.pdf](Final_Report_Single.pdf)
+Can a neural correction to a structured GARCH forecast improve tail-risk
+calibration? The historical study finds that no model satisfies every diagnostic:
+historical simulation struggles with changing volatility; GARCH-family models
+offer useful dynamics; unconstrained neural forecasts are unstable; a conservative
+GARCH-anchored correction (C2) improves unconditional coverage in the reported
+sample, while residual extreme-tail dependence remains. The report does not
+establish uniform pinball-loss superiority over GARCH-family benchmarks.
 
-The report contains the full data exploration, model descriptions, rolling-window setup, VaR forecast figures, backtesting tables, statistical hypothesis tests, comparative discussion, conclusion, and potential improvements.
+**C2 is exploratory.** Its historical weight decay was selected after inspecting
+final out-of-sample failure rates. Those results are not untouched test evidence.
+The original report and saved outputs remain available for inspection; new
+experiments are written separately with explicit configuration and provenance.
 
-## Project Scope
+![Historical five-model aligned violation rates; excludes C2](code/outputs/figures/aligned_failure_rates.png)
 
-The empirical task is to forecast one-day-ahead downside tail risk for SPY log returns at three tail levels:
+*Historical comparison from five saved prediction files. Dashed lines show target
+violation rates. This is not the C2-aligned comparison from Chapter 6.*
 
-- 1% VaR
-- 5% VaR
-- 10% VaR
+## Quick start
 
-The project is designed as a clean mini research program rather than a single script. Each section has its own organized code and report materials, while `code/run_all.py` provides a compact reproducibility entry point for the final aligned comparison.
+Use **Python 3.12** and run from the repository root:
 
-## Models Compared
+```sh
+python -m venv .venv
+# Windows PowerShell:
+.\.venv\Scripts\Activate.ps1
+# macOS / Linux: source .venv/bin/activate
+python -m pip install -r requirements-lock.txt
+```
 
-The report and code cover the following model families:
+The lock records versions verified on Windows x64 with Python 3.12.14. Neural
+runs use CPU. Hardware/platform changes can affect numerical results.
 
-| Model family | Role in the project |
-|---|---|
-| Historical Simulation | Simple non-parametric benchmark based on rolling empirical quantiles |
-| KDE-weighted Historical Simulation | Non-parametric benchmark with density-based weighting |
-| GARCH-t | Classical conditional-volatility benchmark with Student-t innovations |
-| GJR-GARCH-t | Asymmetric volatility benchmark for leverage effects |
-| MLP Quantile Regression | Neural quantile model trained with pinball loss |
-| GARCH-anchored neural correction | Experimental neural extension using GARCH information as an anchor |
+### 1. Recalculate metrics from saved predictions
 
-The GARCH-anchored neural correction is treated as an experimental proof of concept. The report explicitly discusses its limitations, including the risk of test-set-informed hyperparameter choice, rather than presenting it as a fully validated benchmark.
+```sh
+python scripts/reproduce.py evaluate --output results/cached-check
+```
 
-## Statistical Evaluation
+This trains **no models**. It reads the five existing forecast CSVs and saves
+`tables/aligned_model_comparison.csv`, `tables/evaluation_dates.csv`,
+`figures/aligned_failure_rates.png`, and `manifest.json` beneath the output directory.
 
-The backtesting framework includes:
+To include the archived exploratory C2 predictions on a common, later sample:
 
-- Rolling-window VaR forecasting
-- Failure-rate comparison across 1%, 5%, and 10% tails
-- Kupiec unconditional coverage tests
-- Christoffersen independence / conditional coverage tests
-- Pinball-loss comparison for quantile forecast quality
-- Aligned-window comparison to make model performance more directly comparable
+```sh
+python scripts/reproduce.py evaluate --include-c2 --output results/cached-c2-check
+```
 
-## Repository Structure
+This six-model comparison covers the generic baselines plus C2. It does not
+reconstruct Chapter 6's additional ordinary-HS and GARCH-X experiments.
+
+### 2. Check the complete training pipeline on a small sample
+
+```sh
+python scripts/reproduce.py train --config configs/smoke.json --max-observations 160 --output results/smoke
+```
+
+This fits all seven model specifications using short windows and two neural
+epochs. It checks that the workflow runs; its metrics are not research results.
+
+### 3. Run new full-sample experiments
+
+```sh
+python scripts/reproduce.py train --config configs/baselines.json --output results/baselines
+python scripts/reproduce.py train --config configs/full_exploratory.json --output results/full-exploratory
+```
+
+The first configuration fits six baselines, including ordinary HS. The second
+adds C2. Full rolling fits take substantially longer than cached evaluation.
+These are new, explicitly specified experiments; the migration does not claim
+exact reconstruction of every historical report table.
+
+For multiple seeds:
+
+```sh
+python scripts/reproduce.py train --config configs/full_exploratory.json --seeds 42 43 44 --output results/multiple-seeds
+```
+
+Every output directory must be new or empty. Existing results are never silently
+overwritten. See the [reproduction guide](docs/REPRODUCIBILITY.md) for artifacts,
+model timing, historical-table mapping and known research limitations.
+
+## Models
+
+| Configuration ID | Specification |
+| --- | --- |
+| `hs` | Ordinary equal-weighted empirical Historical Simulation |
+| `weighted_hs` | Exponentially time-weighted HS; default decay 0.98 |
+| `kde_hs` | Gaussian KDE-smoothed time-weighted HS; Scott bandwidth |
+| `garch_t` | GARCH(1,1) with standardized Student-t innovations |
+| `gjr_garch_t` | Asymmetric GJR-GARCH(1,1)-t |
+| `mlp` | Lag-window MLP, trained with pinball loss and chronological early stopping |
+| `c2` | Exploratory conservative neural correction anchored to GARCH-t |
+
+The generic lag-window MLP is distinct from the Chapter 5 Model A/B
+specifications. The archived file `var_historical_simulation.csv` contains
+**time-weighted HS**, despite its abbreviated filename.
+
+## Data and evaluation
+
+The checked-in snapshot contains 4,640 daily observations from **2000-01-04 to
+2018-06-27**: decimal log returns (`log_ret`) and two realized-volatility measures
+(`rv5`, `bv`). Upstream source and redistribution terms are not yet documented
+well enough to verify; see the [data note](code/data/README.md).
+
+New comparisons use the same finite dates across models for each quantile,
+reject conflicting realized returns, and report Kupiec coverage, Christoffersen
+independence/conditional coverage, pinball loss and excluded-observation counts.
+Independence transitions do not bridge missing trading observations. A larger
+p-value is not a model-ranking score, and non-rejection is not proof of correctness.
+
+## Repository layout
 
 ```text
-SPY_VaR_GitHub_Public/
-|-- README.md
-|-- Final_Report_Single.pdf
-`-- code/
-    |-- run_all.py
-    |-- requirements.txt
-    |-- data/
-    |   `-- spy_data.csv
-    |-- outputs/
-    |   |-- figures/
-    |   |-- forecasts/
-    |   `-- tables/
-    |-- scripts/
-    |   `-- full project script set copied from the original VaR project
-    |-- sections/
-    |   |-- section_01_introduction/
-    |   |-- section_02_data_backtesting/
-    |   |-- section_03_historical_simulation/
-    |   |-- section_04_garch_models/
-    |   |-- section_05_mlp_quantile/
-    |   `-- section_06_comparison_conclusion/
-    `-- src/
-        `-- shared reference utilities
+SPY_VaR/
+├── configs/                 # Explicit baseline, full and smoke settings
+├── src/spy_var/             # Canonical data, models, backtesting and pipeline
+├── scripts/reproduce.py     # Cached evaluation / training entry point
+├── tests/                  # Timing, alignment and statistical boundary checks
+├── docs/REPRODUCIBILITY.md  # Methods, provenance and migration notes
+├── results/                # New local experiments (ignored by Git)
+├── code/
+│   ├── data/               # Canonical input snapshot and data documentation
+│   ├── outputs/            # Preserved historical predictions, tables, figures
+│   ├── scripts/            # Original scripts; main.py redirects to new pipeline
+│   ├── sections/           # Preserved chapter sources and historical artifacts
+│   └── run_all.py          # Compatibility entry point for cached evaluation
+└── Final_Report_Single.pdf
 ```
 
-Each section folder keeps its own local materials, usually including:
+Chapter copies remain an archive for the original report. New experiments use
+one implementation and one data snapshot rather than modifying chapter copies.
 
-- `code/`: section-specific Python scripts
-- `data/`: section-level input data when needed
-- `outputs/`: generated tables and figures
-- `report/`: Markdown or source report text
-- `pdf/`: standalone PDF output when available
-- `README.md`: section-level explanation
+## Validation
 
-## Quick Reproduction
-
-Install dependencies from the `code/` directory:
-
-```bash
-pip install -r requirements.txt
+```sh
+python -m pytest
 ```
 
-Then run the compact final reproduction script:
+GitHub Actions runs tests, both cached-evaluation paths and the seven-model smoke
+experiment. The environment lock does not reconstruct the unknown original
+training environment of the historical CSVs.
 
-```bash
-cd code
-python run_all.py
-```
+See the [validation record](docs/VALIDATION.md) for the checks actually run and
+their limits.
 
-This regenerates the aligned model-comparison table and aligned failure-rate figure:
+## Author and license
 
-- `code/outputs/tables/aligned_model_comparison.csv`
-- `code/outputs/figures/aligned_failure_rates.png`
+Homepage: <https://cloudcollection.github.io>
 
-## Key Outputs
-
-Important generated outputs include:
-
-| Output | Path |
-|---|---|
-| Aligned model comparison table | `code/outputs/tables/aligned_model_comparison.csv` |
-| Backtesting results | `code/outputs/tables/backtesting_results.csv` |
-| Model evaluation summary | `code/outputs/tables/model_evaluation_summary.csv` |
-| VaR forecast files | `code/outputs/forecasts/` |
-| Final figures | `code/outputs/figures/` |
-| Section-level materials | `code/sections/` |
-
-Example final comparison figure:
-
-![Aligned failure rates](code/outputs/figures/aligned_failure_rates.png)
-
-## Notes on Reproducibility
-
-This repository keeps both a compact reproduction path and the section-organized project materials:
-
-- Use `code/run_all.py` for a quick check of the final aligned comparison.
-- Use `code/scripts/` for the broader original script set.
-- Use `code/sections/` to inspect how each report section is connected to its own code and outputs.
-
-Some computationally heavier model runs may require more time than the compact reproduction script. The included forecasts, tables, and figures are kept so that the report can be audited without rerunning every expensive step.
-
-## Author
-Homepage: <https://cloudcollection.github.io>  
+Code is available under the [MIT license](LICENSE). The code license does not
+establish third-party data rights. This repository has no declared publication
+DOI; [citation metadata](CITATION.cff) identifies the maintainer by GitHub handle.
+Include the commit/release used for your experiment when citing the repository.
 
 

@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "Please cite this repository and the commit or release used for your experiment."
+type: software
+title: "SPY Value-at-Risk Forecasting"
+authors:
+  - name: "cloudcollection"
+repository-code: "https://github.com/cloudcollection/SPY_VaR"
+url: "https://github.com/cloudcollection/SPY_VaR"
+license: MIT
