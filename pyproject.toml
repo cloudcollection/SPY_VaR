@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spy-var-research"
+version = "0.1.0"
+description = "Reproducible rolling-window SPY Value-at-Risk experiments"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = "MIT"
+dependencies = [
+    "numpy>=1.26,<3", "pandas>=2.2,<3", "scipy>=1.13,<2",
+    "matplotlib>=3.8,<4", "arch>=7.2,<8", "torch>=2.5,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9"]
+figures = ["python-pptx>=1.0.2,<2", "Pillow>=10,<14"]
+
+[project.scripts]
+spy-var = "spy_var.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"

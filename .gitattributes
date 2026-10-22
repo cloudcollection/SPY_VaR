@@ -1,0 +1,4 @@
+# Keep model-source fingerprints stable across Windows and Linux checkouts.
+*.py text eol=lf
+*.png binary
+*.pptx binary

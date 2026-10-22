@@ -1,0 +1,12 @@
+{
+  "window_size": 1000,
+  "seed": 42,
+  "models": ["patchtst_qr"],
+  "patch": {
+    "lookback": 64, "patch_length": 16, "stride": 8,
+    "d_model": 32, "heads": 4, "layers": 2, "feedforward": 64,
+    "dropout": 0.1, "epochs": 20, "batch_size": 64,
+    "learning_rate": 0.001, "validation_fraction": 0.2,
+    "patience": 4, "refit_every": 20, "norm_epsilon": 0.00001
+  }
+}

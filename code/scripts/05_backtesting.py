@@ -132,8 +132,8 @@ def conclusion(alpha: float, failure_rate: float, kupiec_p: float, ind_p: float)
     if np.isnan(failure_rate):
         return "Insufficient valid forecasts"
     messages = []
-    messages.append("coverage accepted" if kupiec_p >= 0.05 else "coverage rejected")
-    messages.append("independence accepted" if ind_p >= 0.05 else "independence rejected")
+    messages.append("coverage not rejected" if kupiec_p >= 0.05 else "coverage rejected")
+    messages.append("independence not rejected" if ind_p >= 0.05 else "independence rejected")
     direction = "too many violations" if failure_rate > alpha else "too few violations"
     return f"{'; '.join(messages)} ({direction})"
 

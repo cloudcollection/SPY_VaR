@@ -1,0 +1,14 @@
+{
+  "window_size": 1000,
+  "seed": 42,
+  "decay": 0.98,
+  "models": ["hs", "weighted_hs", "kde_hs", "garch_t", "gjr_garch_t", "mlp", "c2"],
+  "mlp": {
+    "lag": 20, "epochs": 40, "batch_size": 64, "learning_rate": 0.001,
+    "validation_fraction": 0.2, "patience": 5, "refit_every": 20
+  },
+  "c2": {
+    "epochs": 200, "validation_fraction": 0.1, "patience": 10,
+    "refit_every": 20, "conservative_scale": 1.0, "weight_decay": 0.00001
+  }
+}
