@@ -11,28 +11,31 @@ Run commands from the repository root after installing `requirements-lock.txt`.
 The entry script also works when invoked by absolute path from another directory.
 
 ```sh
-python scripts/reproduce.py evaluate --output results/cached-check
-python scripts/reproduce.py evaluate --include-c2 --output results/cached-c2-check
-python scripts/reproduce.py train --config configs/smoke.json --max-observations 160 --output results/smoke
-python scripts/reproduce.py train --config configs/baselines.json --output results/baselines
-python scripts/reproduce.py train --config configs/full_exploratory.json --output results/full-exploratory
-python scripts/reproduce.py train --config configs/full_exploratory.json --seeds 42 43 44 --output results/multiple-seeds
+python scripts/reproduce.py evaluate --output ../spy-var-runs/cached-check
+python scripts/reproduce.py evaluate --include-c2 --output ../spy-var-runs/cached-c2-check
+python scripts/reproduce.py train --config configs/smoke.json --max-observations 160 --output ../spy-var-runs/smoke
+python scripts/reproduce.py train --config configs/baselines.json --output ../spy-var-runs/baselines
+python scripts/reproduce.py train --config configs/full_exploratory.json --output ../spy-var-runs/full-exploratory
+python scripts/reproduce.py train --config configs/full_exploratory.json --seeds 42 43 44 --output ../spy-var-runs/multiple-seeds
 ```
 
-The smoke configuration checks the pipeline with a chronological data prefix and
+The eight-model smoke configuration checks the pipeline with a chronological data prefix and
 two training epochs. Its metrics are not research evidence. Full rolling GARCH
 and neural experiments take substantially longer; runtime depends on hardware.
 
 ## Canonical implementation and historical materials
 
 `src/spy_var/` is the authoritative implementation for new experiments.
+Model implementations are grouped under `src/spy_var/models/`; legacy imports
+remain compatibility aliases. New Transformer settings and changes are described
+in `METHODS.md`, and actual three-seed runs in `EXPERIMENTS.md`.
 `code/data/spy_data.csv` is the single input used by that implementation.
 `code/sections/`, the original individual chapter scripts, and `code/src/*_original.py`
 remain an archive so that report links and historical outputs remain inspectable.
 The duplicated chapter data are not inputs to the new pipeline. They are not
 silently deleted or substituted during this migration.
 
-`code/run_all.py` redirects to cached evaluation. `code/scripts/main.py` redirects
+`code/run_all.py` redirects to cached evaluation with an output directory beside the checkout. `code/scripts/main.py` redirects
 to the full configuration-driven pipeline. Use the new CLI for explicit options.
 
 ## Historical table mapping
@@ -111,7 +114,30 @@ non-rejection as proof of correctness, rank models by maximum p-value, or equate
 coverage calibration with uniformly better pinball loss. New multi-seed runs
 describe training variability; they do not by themselves establish superiority.
 
-Upstream data provenance, download procedure and redistribution terms still need
-author verification; see `code/data/README.md`. No DOI or publication claim has
-been fabricated. `CITATION.cff` identifies the repository maintainer by GitHub
+The data fields and integrity checks are documented in `code/data/README.md`.
+No DOI or publication claim has been fabricated. `CITATION.cff` identifies the repository maintainer by GitHub
 handle; it does not assert a publication or invent a preferred author identity.
+
+## Rebuild the final editable figures
+
+The original diagrams are generated from code and the real CSVs. Install the
+optional figure dependencies and obtain the user-selected MIT-licensed tool at
+the pinned revision in `REFERENCES.md`, outside the checkout:
+
+```sh
+python -m pip install -e .[figures]
+python scripts/build_readme_figures.py --tool-root /path/to/EditableImage2PPTSkill --work-dir /path/to/private-figure-build
+```
+
+On Windows with PowerPoint installed, export the saved deck:
+
+```powershell
+.\scripts\export_readme_figures.ps1 -Deck .\docs\figures\spy_var_methods.pptx -OutputDirectory .\docs\figures -WorkDirectory D:\path\to\private-ppt-export
+```
+
+The work directory must be outside the checkout. Only the four final PNGs and
+the editable PPTX belong in `docs/figures/`; extracted data plots, source sheets,
+layout JSONs, compatibility copies and QA reports are private build materials.
+All ordinary diagram text/shapes remain editable; numerical plots are separate
+picture objects inside the deck. No reference-paper image is substituted for
+this project's methods or measurements.

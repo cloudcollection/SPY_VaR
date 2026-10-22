@@ -16,6 +16,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
+figures = ["python-pptx>=1.0.2,<2", "Pillow>=10,<14"]
 
 [project.scripts]
 spy-var = "spy_var.cli:main"

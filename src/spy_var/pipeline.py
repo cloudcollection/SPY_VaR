@@ -12,6 +12,7 @@ import time
 import pandas as pd
 
 from .backtesting import evaluate
+from .artifacts import load_archived_forecasts
 from .config import MODEL_NAMES
 from .data import load_data
 from .plotting import plot_failure_rates
@@ -51,7 +52,7 @@ def provenance(root):
         "started_at_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": commit, "python": platform.python_version(), "platform": platform.platform(),
         "packages": versions,
-        "source_sha256": {str(path.relative_to(root)): fingerprint(path) for path in sorted((root / "src/spy_var").glob("*.py"))},
+        "source_sha256": {str(path.relative_to(root)): fingerprint(path) for path in sorted((root / "src/spy_var").rglob("*.py"))},
     }
 
 
@@ -65,8 +66,8 @@ def save_evaluation(frames, output, calendar):
 
 
 def run_experiment(root, data_path, config, output, max_observations=None):
-    from . import anchored, neural
-    from .classical import garch_forecast, historical_forecast
+    from .models import garch_anchored as anchored, mlp as neural
+    from .models.classical import garch_forecast, historical_forecast
 
     config.validate()
     data = load_data(data_path)
@@ -116,6 +117,10 @@ def run_experiment(root, data_path, config, output, max_observations=None):
                 )
                 prediction = neural.neural_quantile_var(data, settings)
                 pd.DataFrame(neural.TRAINING_HISTORY).to_csv(output / "training/mlp.csv", index=False)
+            elif model == "patchtst_qr":
+                from .models.patch_transformer import rolling_forecast
+                prediction, history = rolling_forecast(data, config)
+                history.to_csv(output / "training/patchtst_qr.csv", index=False)
             elif model == "c2":
                 anchored.WINDOW_SIZE = config.window_size
                 anchored.MAX_EPOCHS = config.c2.epochs
@@ -166,20 +171,7 @@ def run_experiment(root, data_path, config, output, max_observations=None):
 
 
 def evaluate_cached(root, output, include_c2=False):
-    cached = root / "code/outputs/forecasts"
-    files = {
-        "weighted_hs": cached / "var_historical_simulation.csv",
-        "kde_hs": cached / "var_kde_weighted_hs.csv",
-        "garch_t": cached / "var_garch_t.csv",
-        "gjr_garch_t": cached / "var_gjr_garch_t.csv",
-        "mlp": cached / "var_mlp_quantile.csv",
-    }
-    frames = {MODEL_NAMES[key]: pd.read_csv(path) for key, path in files.items()}
-    if include_c2:
-        path = root / "code/sections/section_05_mlp_quantile/outputs/external_section5_results/section5_model_c_garch_anchored_predictions.csv"
-        prediction = pd.read_csv(path)
-        frames[MODEL_NAMES["c2"]] = prediction.loc[prediction.model_name.eq("Model C2: Conservative GARCH-anchored MLP-QR")].copy()
-        files["c2"] = path
+    frames, files = load_archived_forecasts(root, include_c2)
     data_path = root / "code/data/spy_data.csv"
     calendar = load_data(data_path).index
     output = prepare_output(output)
